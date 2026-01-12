@@ -83,12 +83,12 @@ function Checker() {
           <img id="videoThumb" src={videoData?.thumbnail[videoData?.thumbnail.length - 1].url} />
           <h2 className="titles" id="videoTitle">{videoData?.videoName}</h2>
 
-          <div className="containerItems">
+          <div id="authorContainer"className="containerItems">
             <img src={videoData?.authorProfilePic} />
             <h3 id="authorTitle">Author:</h3>
             <p>{videoData?.author}</p>
           </div>
-          <div className="containerItems">
+          <div id="descriptionContainer" className="containerItems">
             <h3 id="descriptionTitle">Description:</h3>
             <p>{videoData?.description}</p>
           </div>

@@ -11,7 +11,7 @@ function Application() {
   return (
   <div>
     <ul id="Nav">
-      <li><ArrowBigDownDash /></li>
+      <li><ArrowBigDownDash size={32} /></li>
       <li>
         <ThemeSwitcher  />
       </li>
