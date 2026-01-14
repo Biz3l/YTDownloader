@@ -3,3 +3,8 @@
 
 ## Description
 This is an app for downloading youtube videos, it's simple to use.
+
+### Status
+- [x] Creating the base
+- [x] Integrating Youtube
+- [ ] Creating the download Function from Youtube
