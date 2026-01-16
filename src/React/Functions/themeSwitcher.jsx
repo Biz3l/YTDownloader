@@ -1,7 +1,10 @@
 import React, {useState} from "react";
+import '../Styles/themeswitcher.css';
+
 
 function ThemeSwitcher() {
-  const [isChecked, setChecked] = useState(false);
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const [isChecked, setChecked] = useState(prefersDark);
 
   function handleChange(e) {
     setChecked(e.target.checked);
@@ -17,10 +20,10 @@ function ThemeSwitcher() {
   }
 
   return(
-    <label className="switch">
-          <input type="checkbox"  checked={isChecked} onChange={handleChange}/>
-          <span className="slider"></span>
-        </label>
+    <div className="switch">
+          <input type="checkbox" id="toggleswitch"  checked={isChecked} onChange={handleChange}/>
+          <label for="toggleswitch" className="slider"></label>
+        </div>
   )
 }
 

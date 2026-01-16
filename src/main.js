@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 const ytdl = require("@distube/ytdl-core");
@@ -36,7 +36,11 @@ if (started) {
   app.quit();
 }
 
+
+
+
 const createWindow = () => {
+  
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
