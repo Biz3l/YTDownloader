@@ -8,7 +8,9 @@ function Checker() {
   const [videoData, setVideoData] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [isDarkMode, setDarkMode] = useState(false);
+  
 
+  // Função de Loading
   function loading(color) {
     return (
       <ClipLoader size={42} color={color} />
@@ -39,6 +41,14 @@ function Checker() {
         const data = await window.api.getMetadata(url);
         console.log("Metadata:", data);
         if (data.error) {
+          // erro caso esteja sem internet
+          if (data.error === "getaddrinfo ENOTFOUND www.youtube.com") {
+            setError("Can't load youtube address, please check your internet.")
+            setUrl("");
+            setVideoData(null);
+            setLoading(false);
+            return;
+          }
           setError(data.error);
           setUrl("");
           setVideoData(null);
@@ -70,7 +80,7 @@ function Checker() {
 
     {isLoading && (
       <div id="Loading">
-        {loading({isDarkMode})}
+        {loading({isDarkMode /*Checa se está no dark mode*/ })}
       </div>
     )}
 
@@ -80,19 +90,21 @@ function Checker() {
     {videoData?.thumbnail && (
       <>
           <h2 className="titles" id="videoFound" style={{color: "green"}}>Video found successfully!</h2>
-          <img id="videoThumb" src={videoData?.thumbnail[videoData?.thumbnail.length - 1].url} />
-          <h2 className="titles" id="videoTitle">{videoData?.videoName}</h2>
 
-          <div id="authorContainer"className="containerItems">
-            <img src={videoData?.authorProfilePic} />
-            <h3 id="authorTitle">Author:</h3>
-            <p>{videoData?.author}</p>
+          <img id="videoThumb" src={videoData?.thumbnail[videoData?.thumbnail.length - 1].url} />
+          <div id="videoInformation">
+            <h2 className="titles" id="videoTitle">{videoData?.videoName}</h2>
+
+            <div id="authorContainer"className="containerItems">
+              <img src={videoData?.authorProfilePic} />
+              <h3 id="authorTitle">Author:</h3>
+              <p>{videoData?.author}</p>
+            </div>
+            <div id="descriptionContainer" className="containerItems">
+              <h3 id="descriptionTitle">Description:</h3>
+              <p>{videoData?.description}</p>
+            </div>
           </div>
-          <div id="descriptionContainer" className="containerItems">
-            <h3 id="descriptionTitle">Description:</h3>
-            <p>{videoData?.description}</p>
-          </div>
-          
           </>
     )}
     </div>

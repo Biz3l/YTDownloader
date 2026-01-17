@@ -1,5 +1,47 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
+:root {
+  --black-background-color: black;
+  --white-background-color: white;
+}
+
+body {
+  margin: 0;
+}
+
+
+#windowTitlebar {
+  position: sticky;
+  height: 30px; 
+  top: 0px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  z-index: 10000000;
+  justify-items: center;
+  justify-content: space-between;
+ -webkit-app-region: drag;
+ user-select: none;
+}
+
+#windowTitlebar p {
+  margin-left: 5px;
+}
+
+#windowTitlebarControls {
+  -webkit-app-region: no-drag;
+}
+
+.windowTitlebarButton {
+  width: 40px;
+  border: none;
+  border-radius: 3px;
+  padding: 4px;
+  transition: color 0.3s, background-color 0.1s;
+}
+
 
 :root.dark {
   body {
@@ -23,6 +65,18 @@
   transition: boder-color 0.5s;
 }
 
+#videoInformation {
+    background-color: rgba(48, 48, 48, 0.6);
+}
+
+.windowTitlebarButton {
+  color: white;
+  background-color: transparent;
+}
+
+.windowTitlebarButton:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
 }
 
 :root.white {
@@ -37,6 +91,18 @@
   caret-color: rgb(0, 0, 0);
 }
 
+#videoInformation {
+    background-color: rgba(224, 224, 224, 0.6);
+}
+
+.windowTitlebarButton {
+  color: black;
+  background-color: transparent;
+}
+
+.windowTitlebarButton:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+}
 
 }
 
@@ -152,12 +218,29 @@ body {
   flex-direction: column;
   align-content: center;
   align-items: center;
+  text-align: center;
 }
 
 #videoThumb {
   width: 25%;
   border: solid 3px;
   transition: boder-color 0.5s;
+}
+
+@media only screen and (max-width: 800px) {
+  #videoThumb {
+    width: 540px;
+  }
+}
+
+#videoInformation {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  border-radius: 8px;
+  margin-top: 20px;
+  padding: 10px;
 }
 
 #authorContainer {
@@ -184,6 +267,7 @@ body {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
+  text-align: center;
 
 }
 

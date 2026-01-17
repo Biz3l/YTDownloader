@@ -45,6 +45,8 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    titleBarStyle: "hidden",
+    center: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -59,6 +61,26 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+  
+  ipcMain.on("app/close", () => {
+  mainWindow.close();
+  })
+
+  ipcMain.on("app/minimize", () => {
+    mainWindow.minimize();
+  })
+
+  ipcMain.on("app/fullscreen", () => {
+    if (!mainWindow.fullScreen) {
+      mainWindow.setFullScreen(true);
+    } else {
+      mainWindow.setFullScreen(false);
+    }
+})
+
+  ipcMain.on("app/devTools", () => {
+      mainWindow.webContents.toggleDevTools();
+  })
 };
 
 // This method will be called when Electron has finished
@@ -74,6 +96,7 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
+  
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

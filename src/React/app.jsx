@@ -3,13 +3,14 @@ import Checker from "./Functions/form"
 import { motion } from "framer-motion";
 import { ArrowBigDownDash } from "lucide-react";
 import ThemeSwitcher from "./Functions/themeSwitcher";
-
+import Titlebar from "./Functions/titlebar";
 
 const MotionArrow = motion(ArrowBigDownDash);
 
 function Application() {
   return (
   <div>
+    <Titlebar />
     <ul id="Nav">
       <li><ArrowBigDownDash size={32} /></li>
       <li>
