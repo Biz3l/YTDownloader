@@ -90,3 +90,7 @@ typings/
 
 # Electron-Forge
 out/
+
+
+# logs
+*-player-script.js

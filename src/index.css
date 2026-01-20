@@ -9,6 +9,17 @@ body {
   margin: 0;
 }
 
+#logoAndTitle {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+#logoMain {
+  height: 25px;
+  margin-right: 10px;
+  margin-top: 2px;
+}
 
 #windowTitlebar {
   position: sticky;
@@ -23,7 +34,8 @@ body {
   justify-items: center;
   justify-content: space-between;
  -webkit-app-region: drag;
- user-select: none;
+  user-select: none;
+  transition: background-color 0.5s;
 }
 
 #windowTitlebar p {
@@ -31,15 +43,18 @@ body {
 }
 
 #windowTitlebarControls {
+  position: relative;
+  top: -2px;
   -webkit-app-region: no-drag;
 }
 
 .windowTitlebarButton {
   width: 40px;
+  height: 30px;
   border: none;
   border-radius: 3px;
   padding: 4px;
-  transition: color 0.3s, background-color 0.1s;
+  transition: color 0.5s;
 }
 
 
@@ -62,11 +77,15 @@ body {
 
 #videoThumb {
   border-color: aliceblue;
-  transition: boder-color 0.5s;
+  transition: border-color 0.5s;
 }
 
 #videoInformation {
     background-color: rgba(48, 48, 48, 0.6);
+}
+
+#windowTitlebar {
+  background-color: var(--black-background-color);
 }
 
 .windowTitlebarButton {
@@ -93,6 +112,10 @@ body {
 
 #videoInformation {
     background-color: rgba(224, 224, 224, 0.6);
+}
+
+#windowTitlebar {
+  background-color: var(--white-background-color);
 }
 
 .windowTitlebarButton {
@@ -138,6 +161,10 @@ body {
 #Nav input[type="checkbox"] {
   transform: scale(1.5);
   margin: 5px;
+}
+
+ #Nav svg {
+  margin-left: 5px;
 }
 
 
@@ -224,6 +251,7 @@ body {
 #videoThumb {
   width: 25%;
   border: solid 3px;
+  border-radius: 20px;
   transition: boder-color 0.5s;
 }
 
@@ -274,4 +302,34 @@ body {
 #descriptionContainer p {
   width: 500px;
   margin-top: 10px;
+}
+
+.downloadButton {
+  background-color: rgba(52, 152, 219, 0.8);
+  border: none;
+  margin: 10px;
+  margin-top: 25px;
+  border-radius: 10px;
+  width: 150px;
+  height: 45px;
+}
+
+.downloadButton:hover {
+  background-color: rgb(155, 214, 216);
+  cursor: pointer;
+  transform: translateY(-3px);
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+#progressBar {
+  margin-top: 20px;
+  width: 500px;
+  height: 25px;
+}
+
+#filePath {
+  color: rgb(0, 255, 76);
+  background-color: rgba(48, 48, 48, 0.5);
+  border-radius: 20px;
+  width: 325px;
 }

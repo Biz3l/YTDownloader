@@ -4,12 +4,18 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: './src/Resources/icon',
+    extraResource: [
+      'node_modules/ffmpeg-static/ffmpeg.exe'
+    ],
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        setupIcon: './src/Resources/icon.ico',
+      },
     },
     {
       name: '@electron-forge/maker-zip',
@@ -17,7 +23,11 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {},
+      config: {
+        options:{
+          icon: './src/Resources/YTDownloaderlogo.png',
+        }
+      },
     },
     {
       name: '@electron-forge/maker-rpm',

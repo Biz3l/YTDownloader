@@ -1,16 +1,34 @@
-import { app, BrowserWindow, ipcMain, nativeImage } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, Tray } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 const ytdl = require("@distube/ytdl-core");
+const ytdlAlter = require("ytdl-core-discord");
+const fs = require("fs");
+import { pipeline } from 'node:stream/promises';
+import ffmpeg from 'fluent-ffmpeg';
+import ffmpegPath from 'ffmpeg-static';
 
-// handle ytdlcore on electron
+
+if (process.platform === 'win32') {
+  app.setAppUserModelId('com.ytdownloader.app');
+}
+
+const iconPath = path.join(__dirname, 'Resources', 'YTDownloaderlogo.ico');
+const trayPath = path.join(__dirname, 'Resources', 'YTDownloaderlogo.png');
+
+const trayIcon = nativeImage.createFromPath(trayPath);
+trayIcon.resize({ width: 16, height: 16 });
+
+
+
+// handle ytdl on electron
 
 ipcMain.handle("yt:getMetadata", async (_, url) => {
   try {
     if (!ytdl.validateURL(url)) {
       throw new Error("Invalid YouTube URL");
     }
-    const data = await ytdl.getInfo(url);
+    const data = await ytdl.getInfo(url); // Pega info da URL passada
 
     return (
       {
@@ -30,6 +48,100 @@ ipcMain.handle("yt:getMetadata", async (_, url) => {
   }
 });
 
+// Ytdl for downloading
+ipcMain.handle("yt:downloadVideo", async (_, url, format) => {
+    function sanitizeFileName(name) {
+    return name.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").trim();
+  }
+  try {
+    if(!ytdl.validateURL(url)) {
+      return ("Invalid URL");
+    };
+    
+    const validFormats = [".mp4", ".mp3"];
+    if (!validFormats.includes(format)){
+      return ("Invalid Format!");
+    };
+
+    const videoInfo = await ytdl.getInfo(url);
+    const videoTitle = videoInfo.videoDetails.title;
+    let downloadPath = await path.join(app.getPath('downloads'), `${sanitizeFileName(videoTitle)}${format}`);
+
+
+    if (format === ".mp4") {
+      const videoStream = ytdl(url, {
+        quality: "highestvideo",
+        filter: "videoandaudio",
+      });
+
+      const fileStream = fs.createWriteStream(downloadPath);
+
+      await pipeline(videoStream, fileStream);
+
+      return {
+        success: true,
+        filePath: downloadPath,
+      };
+
+      } else if (format === ".mp3") {
+        const videoStream = ytdl(url, {
+        quality: "highestvideo",
+        filter: "videoandaudio",
+      });
+      
+      downloadPath = await path.join(app.getPath('downloads'), `${sanitizeFileName(videoTitle)}.mp4`);
+
+      const fileStream = fs.createWriteStream(downloadPath);
+
+      await pipeline(videoStream, fileStream);
+      
+      let ffmpegExecPath;
+
+      if (app.isPackaged) {
+        ffmpegExecPath = path.join(
+          process.resourcesPath, 'ffmpeg.exe'
+        );
+      } else {
+        ffmpegExecPath = ffmpegPath;
+      }
+
+      ffmpeg.setFfmpegPath(ffmpegExecPath);
+
+      await new Promise((resolve, reject) => {
+        ffmpeg(downloadPath)
+        .toFormat('mp3')
+        .save(path.join(
+          app.getPath('downloads'), `${sanitizeFileName(videoTitle)}.mp3`
+      )
+    )
+        .on('end', resolve)
+        .on('error', reject);
+      });
+
+      
+      await fs.unlink(downloadPath, (error => {
+        if (error) {
+          return {result: error,
+            message: "An error ocurred while trying to delete the file",
+          };
+        } else {
+          return {
+            result: "file Succesfully deleted",
+          }
+        }
+      }));
+
+      return {
+        success: true,
+        filePath: path.join(
+          app.getPath('downloads'), `${sanitizeFileName(videoTitle)}.mp3`),
+      }
+    }
+    
+    } catch (error) {
+      return {error: error.message};
+  }
+})
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -37,9 +149,10 @@ if (started) {
 }
 
 
-
+let tray;
 
 const createWindow = () => {
+  tray = new Tray(trayIcon);
   
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -47,6 +160,7 @@ const createWindow = () => {
     height: 600,
     titleBarStyle: "hidden",
     center: true,
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -58,10 +172,9 @@ const createWindow = () => {
   } else {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
   
+// Handle titlebar commands
+
   ipcMain.on("app/close", () => {
   mainWindow.close();
   })

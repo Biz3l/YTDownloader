@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import logo from '../../Resources/YTDownloaderlogo.png';
 
 // Funções da titlebar
 
@@ -26,7 +27,10 @@ function Titlebar() {
   const [devMode, setDevMode] = useState(false); // Padrão false :)
   return (
   <div id="windowTitlebar">
-    <p>YTMP3Downloader</p>
+    <div id="logoAndTitle">
+      <img id="logoMain" src={logo} alt="logo"/>
+      <p>YTDownloader</p>
+    </div>
       <div id="windowTitlebarControls">
         {devMode && (
           <button className="windowTitlebarButton" onClick={() => {

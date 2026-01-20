@@ -12,7 +12,7 @@ function Application() {
   <div>
     <Titlebar />
     <ul id="Nav">
-      <li><ArrowBigDownDash size={32} /></li>
+      <li></li>
       <li>
         <ThemeSwitcher  />
       </li>
