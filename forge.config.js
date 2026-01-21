@@ -6,7 +6,7 @@ const path = require('node:path');
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: './src/Resources/icon',
+    icon: path.join(__dirname, 'Resources', 'icon'),
     extraResource: [
       path.join(__dirname, 'node_modules/ffmpeg-static', 'ffmpeg')  //'./node_modules/ffmpeg-static/ffmpeg.exe'
     ],
