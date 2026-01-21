@@ -8,7 +8,14 @@ import { pipeline } from 'node:stream/promises';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
 
-if (require('electron-squirrel-startup')) app.quit();
+try {
+  // Só existe/vale quando o app está instalado via Squirrel
+  if (require('electron-squirrel-startup')) {
+    app.quit();
+  }
+} catch (_) {
+  // Build zip/portátil pode não ter esse módulo e tá tudo bem
+}
 
 
 if (process.platform === 'win32') {
