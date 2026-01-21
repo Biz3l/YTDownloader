@@ -7,6 +7,12 @@ import { pipeline } from 'node:stream/promises';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
 
+const cacheDir = path.join(__dirname, 'cache');
+
+fs.mkdirSync(cacheDir, {recursive: true });
+
+process.chdir(cacheDir);
+
 try {
   // Just exists when the app is installed via squirrel
   if (require('electron-squirrel-startup')) {
@@ -127,9 +133,10 @@ ipcMain.handle("yt:downloadVideo", async (_, url, format) => {
       });
 
       
-      await fs.unlink(downloadPath, (error => {
+      await fs.promises.unlink(downloadPath, (error => {
         if (error) {
-          return {result: error,
+          return {
+            result: error,
             message: "An error ocurred while trying to delete the file",
           };
         } else {
@@ -139,10 +146,12 @@ ipcMain.handle("yt:downloadVideo", async (_, url, format) => {
         }
       }));
 
+
+
       return {
         success: true,
         filePath: path.join(
-          app.getPath('downloads'), `${sanitizeFileName(videoTitle)}.mp3`),
+          app.getPath('downloads'), `${sanitizeFileName(videoTitle)}.mp3`)
       }
     }
     
