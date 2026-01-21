@@ -67,13 +67,13 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-zip',
-      platforms: ['win32', 'darwin'],
+      platforms: ['win32', 'darwin', 'linux'],
     },
     {
       name: '@electron-forge/maker-deb',
       config: {
         options:{
-          icon: path.join(__dirname, 'Resources', 'YTDownloaderlogo.png') // './src/Resources/YTDownloaderlogo.png',
+          icon: path.join(__dirname, 'src/Resources', 'YTDownloaderlogo.png') // './src/Resources/YTDownloaderlogo.png',
         }
       },
     },
