@@ -1,12 +1,14 @@
 const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 
+const path = require('node:path');
+
 module.exports = {
   packagerConfig: {
     asar: true,
     icon: './src/Resources/icon',
     extraResource: [
-      'node_modules/ffmpeg-static/ffmpeg.exe'
+      path.join(__dirname, 'node_modules/ffmpeg-static', 'ffmpeg')  //'./node_modules/ffmpeg-static/ffmpeg.exe'
     ],
   },
   rebuildConfig: {},
@@ -14,7 +16,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        setupIcon: './src/Resources/icon.ico',
+        setupIcon: path.join(__dirname, 'Resources', 'icon.ico'), //'./src/Resources/icon.ico',
       },
     },
     {
@@ -25,7 +27,7 @@ module.exports = {
       name: '@electron-forge/maker-deb',
       config: {
         options:{
-          icon: './src/Resources/YTDownloaderlogo.png',
+          icon: path.join(__dirname, 'Resources', 'YTDownloaderlogo.png') // './src/Resources/YTDownloaderlogo.png',
         }
       },
     },

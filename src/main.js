@@ -8,6 +8,8 @@ import { pipeline } from 'node:stream/promises';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
 
+if (require('electron-squirrel-startup')) app.quit();
+
 
 if (process.platform === 'win32') {
   app.setAppUserModelId('com.ytdownloader.app');
