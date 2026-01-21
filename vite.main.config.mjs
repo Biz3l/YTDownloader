@@ -9,8 +9,7 @@ export default defineConfig({
       external: [
         'ffmpeg-static',
         'fluent-ffmpeg',
-        '@distube/ytdl-core',
-        'ytdl-core-discord'
+        '@distube/ytdl-core'
       ]
     }
   },

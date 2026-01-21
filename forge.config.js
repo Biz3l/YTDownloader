@@ -9,9 +9,9 @@ function copyDir(src, dest) {
   fs.cpSync(src, dest, { recursive: true });
 }
 
-// Lê deps a partir do package-lock (npm v7+ => lockfileVersion 2/3)
+// Read deps from package-lock (npm v7+ => lockfileVersion 2/3)
 function getLockDepsTree(lock, pkgName) {
-  // lock.packages (v2/v3) tem chaves tipo "node_modules/async"
+  // lock.packages (v2/v3) have keys from type node_modules/async 
   if (lock.packages) {
     const key = `node_modules/${pkgName}`;
     const entry = lock.packages[key];
@@ -19,7 +19,7 @@ function getLockDepsTree(lock, pkgName) {
     return Object.keys(entry.dependencies || {});
   }
 
-  // fallback: lock.dependencies (mais antigo)
+  // fallback: lock.dependencies (Old)
   if (lock.dependencies && lock.dependencies[pkgName]) {
     return Object.keys(lock.dependencies[pkgName].requires || {});
   }
@@ -54,7 +54,7 @@ module.exports = {
     ],  
     icon: './src/Resources/icon.ico',
     extraResource: [
-      path.join(__dirname, 'node_modules/ffmpeg-static', 'ffmpeg')  //'./node_modules/ffmpeg-static/ffmpeg.exe'
+      path.join(__dirname, 'node_modules/ffmpeg-static', 'ffmpeg')  
     ],
   },
   rebuildConfig: {},
@@ -62,7 +62,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        setupIcon: './src/Resources/icon.ico', //'./src/Resources/icon.ico',
+        setupIcon: './src/Resources/icon.ico', 
       },
     },
     {
@@ -73,7 +73,7 @@ module.exports = {
       name: '@electron-forge/maker-deb',
       config: {
         options:{
-          icon: path.join(__dirname, 'src/Resources', 'YTDownloaderlogo.png') // './src/Resources/YTDownloaderlogo.png',
+          icon: path.join(__dirname, 'src/Resources', 'YTDownloaderlogo.png')
         }
       },
     },
@@ -111,6 +111,7 @@ module.exports = {
     },
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application
+
     new FusesPlugin({
       version: FuseVersion.V1,
       [FuseV1Options.RunAsNode]: false,
@@ -130,16 +131,15 @@ module.exports = {
 
       const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
 
-      // Raiz: tudo que o main precisa em runtime
+      // Root: all the main needs in runtime
       const roots = [
         'fluent-ffmpeg',
         'ffmpeg-static',
-        '@distube/ytdl-core',
-        'ytdl-core-discord'
+        '@distube/ytdl-core'
       ];
 
 
-      // Pega TODAS as deps recursivas via lock
+      // Take all the deps via lock
       const all = collectAllDeps(lock, roots);
 
       const destNodeModules = path.join(buildPath, 'node_modules');
@@ -151,13 +151,13 @@ module.exports = {
         if (fs.existsSync(src)) {
           copyDir(src, dest);
         } else {
-          // Alguns deps podem ser opcionais em certas plataformas.
-          // Só loga, não quebra o build.
-          console.warn(`⚠️ Não achei ${mod} em node_modules (talvez opcional).`);
+          // Some deps may be optional in some platforms.
+          // Just log, don't break the build
+          console.warn(`⚠️ I didn't find ${mod} in node_modules (maybe optional).`);
         }
       }
 
-      console.log(`✅ Copiei ${all.length} módulos para o pacote (roots: ${roots.join(', ')})`);
+      console.log(`✅ I'd copy all ${all.length} modules to the package (roots: ${roots.join(', ')})`);
     },
   },
 };

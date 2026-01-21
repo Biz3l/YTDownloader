@@ -2,19 +2,18 @@ import { app, BrowserWindow, ipcMain, nativeImage, Tray } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 const ytdl = require("@distube/ytdl-core");
-const ytdlAlter = require("ytdl-core-discord");
 const fs = require("fs");
 import { pipeline } from 'node:stream/promises';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
 
 try {
-  // Só existe/vale quando o app está instalado via Squirrel
+  // Just exists when the app is installed via squirrel
   if (require('electron-squirrel-startup')) {
     app.quit();
   }
 } catch (_) {
-  // Build zip/portátil pode não ter esse módulo e tá tudo bem
+  // Build zip/portable may not have this module, and it's allright
 }
 
 
@@ -22,8 +21,8 @@ if (process.platform === 'win32') {
   app.setAppUserModelId('com.ytdownloader.app');
 }
 
-const iconPath = path.join(__dirname, 'Resources', 'YTDownloaderlogo.ico');
-const trayPath = path.join(__dirname, 'Resources', 'YTDownloaderlogo.png');
+const iconPath = path.join(__dirname, 'src/Resources', 'YTDownloaderlogo.ico');
+const trayPath = path.join(__dirname, 'src/Resources', 'YTDownloaderlogo.png');
 
 const trayIcon = nativeImage.createFromPath(trayPath);
 trayIcon.resize({ width: 16, height: 16 });
