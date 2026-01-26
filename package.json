@@ -1,7 +1,7 @@
 {
   "name": "ytdownloader",
-  "productName": "ytdownloader",
-  "version": "1.0.0",
+  "productName": "YTDownloader",
+  "version": "1.1.0",
   "description": "An Youtube downloader",
   "main": ".vite/build/main.js",
   "scripts": {

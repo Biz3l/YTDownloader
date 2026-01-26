@@ -80,11 +80,15 @@ function Checker() {
     setDownloading(false);
   }
 
+
   return (
     <>
-   <div id="inputForm">
+   <form id="inputForm" onSubmit={(e) => {
+    e.preventDefault();
+    handleSearch();
+  }}>
     <input id="Input" placeholder="Put some URL" value={url} onChange={(e) => setUrl(e.target.value)}></input>
-    <button id="Search" onClick={handleSearch} disabled={isLoading} >{isLoading ? "Loading" : "Search"} </button>
+    <button id="Search" type="submit" disabled={isLoading} >{isLoading ? "Loading" : "Search"} </button>
     {error && (
       <p id="Error" style={{color: "red"}}>{error}</p>
     )}
@@ -95,13 +99,24 @@ function Checker() {
       </div>
     )}
 
-    </div >
+    </form >
 
     <div id="video">
     {videoData?.thumbnail && (
       // Retorna o vídeo do Youtube em uma div caso seja sucedido
       <>
           <h2 className="titles" id="videoFound" style={{color: "green"}}>Video found successfully!</h2>
+          
+          <div id="downloadButtons">
+            <button className="downloadButton" onClick={() => {handleDownload(downloadUrl, ".mp3")}} disabled={isDownloading}>{isDownloading ? "Downloading..." : "Download MP3"}</button>
+            <button className="downloadButton" onClick={() => {handleDownload(downloadUrl, ".mp4")}} disabled={isDownloading}>{isDownloading ? "Downloading..." : "Download MP4"}</button>
+          </div>
+          {Progress && (
+            <progress id="progressBar" value={Progress} max={100} />
+          )}
+          {filePath && (
+            <p id="filePath">File downloaded successfully at {filePath}</p>
+          )}
 
           <img id="videoThumb" src={videoData?.thumbnail[videoData?.thumbnail.length - 1].url} />
           <div id="videoInformation">
@@ -116,16 +131,6 @@ function Checker() {
               <h3 id="descriptionTitle">Description:</h3>
               <p>{videoData?.description}</p>
             </div>
-          </div>
-          {Progress && (
-            <progress id="progressBar" value={Progress} max={100} />
-          )}
-          {filePath && (
-            <p id="filePath">File downloaded successfully at {filePath}</p>
-          )}
-          <div id="downloadButtons">
-            <button className="downloadButton" onClick={() => {handleDownload(downloadUrl, ".mp3")}} disabled={isDownloading}>{isDownloading ? "Downloading..." : "Download MP3"}</button>
-            <button className="downloadButton" onClick={() => {handleDownload(downloadUrl, ".mp4")}} disabled={isDownloading}>{isDownloading ? "Downloading..." : "Download MP4"}</button>
           </div>
           
           </>

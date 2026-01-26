@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, nativeImage, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, Tray, Menu } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 const ytdl = require("@distube/ytdl-core");
@@ -163,9 +163,11 @@ const createWindow = () => {
     icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
     },
   });
 
+  
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
@@ -189,11 +191,24 @@ const createWindow = () => {
     } else {
       mainWindow.setFullScreen(false);
     }
-})
+  })
 
   ipcMain.on("app/devTools", () => {
       mainWindow.webContents.toggleDevTools();
   })
+
+mainWindow.webContents.on("context-menu", (e, params) => {
+    const menu = Menu.buildFromTemplate([
+      { role: "cut", enabled: params.editFlags.canCut },
+      { role: "copy", enabled: params.editFlags.canCopy },
+      { role: "paste", enabled: params.editFlags.canPaste },
+      { type: "separator" },
+      { role: "selectAll" }
+    ]);
+
+    menu.popup();
+});
+
 };
 
 // This method will be called when Electron has finished

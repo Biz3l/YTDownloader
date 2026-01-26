@@ -1,5 +1,5 @@
 # YTMP3Downloader
-![YtDownloader](https://img.shields.io/badge/Youtube-Downloader-red?logo=youtube) [![React](https://img.shields.io/badge/Technology-React-cyan?logo=react)](https://react.dev/) ![Build Status](https://img.shields.io/badge/Build%20Status-Complete-green?style=for-the-badge)
+![YtDownloader](https://img.shields.io/badge/Youtube-Downloader-red?logo=youtube) [![React](https://img.shields.io/badge/Technology-React-cyan?logo=react)](https://react.dev/) [![Build Status](https://img.shields.io/badge/Build%20Status-Complete-green?style=for-the-badge)](https://github.com/Biz3l/YTDownloader/releases)
 
 ## Description
 This is an app for downloading youtube videos, it's simple to use.
