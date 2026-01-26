@@ -2,19 +2,33 @@ import { app, BrowserWindow, ipcMain, nativeImage, Tray, Menu } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 const ytdl = require("@distube/ytdl-core");
-const ytdlAlter = require("ytdl-core-discord");
 const fs = require("fs");
 import { pipeline } from 'node:stream/promises';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
+
+const cacheDir = path.join(__dirname, 'cache');
+
+fs.mkdirSync(cacheDir, {recursive: true });
+
+process.chdir(cacheDir);
+
+try {
+  // Just exists when the app is installed via squirrel
+  if (require('electron-squirrel-startup')) {
+    app.quit();
+  }
+} catch (_) {
+  // Build zip/portable may not have this module, and it's allright
+}
 
 
 if (process.platform === 'win32') {
   app.setAppUserModelId('com.ytdownloader.app');
 }
 
-const iconPath = path.join(__dirname, 'Resources', 'YTDownloaderlogo.ico');
-const trayPath = path.join(__dirname, 'Resources', 'YTDownloaderlogo.png');
+const iconPath = path.join(__dirname, 'src/Resources', 'YTDownloaderlogo.ico');
+const trayPath = path.join(__dirname, 'src/Resources', 'YTDownloaderlogo.png');
 
 const trayIcon = nativeImage.createFromPath(trayPath);
 trayIcon.resize({ width: 16, height: 16 });
@@ -119,9 +133,10 @@ ipcMain.handle("yt:downloadVideo", async (_, url, format) => {
       });
 
       
-      await fs.unlink(downloadPath, (error => {
+      await fs.promises.unlink(downloadPath, (error => {
         if (error) {
-          return {result: error,
+          return {
+            result: error,
             message: "An error ocurred while trying to delete the file",
           };
         } else {
@@ -131,10 +146,12 @@ ipcMain.handle("yt:downloadVideo", async (_, url, format) => {
         }
       }));
 
+
+
       return {
         success: true,
         filePath: path.join(
-          app.getPath('downloads'), `${sanitizeFileName(videoTitle)}.mp3`),
+          app.getPath('downloads'), `${sanitizeFileName(videoTitle)}.mp3`)
       }
     }
     
