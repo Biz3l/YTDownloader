@@ -7,12 +7,6 @@ import { pipeline } from 'node:stream/promises';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
 
-const cacheDir = path.join(__dirname, 'cache');
-
-fs.mkdirSync(cacheDir, {recursive: true });
-
-process.chdir(cacheDir);
-
 try {
   // Just exists when the app is installed via squirrel
   if (require('electron-squirrel-startup')) {

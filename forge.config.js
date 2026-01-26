@@ -54,7 +54,7 @@ module.exports = {
     ],  
     icon: './src/Resources/icon.ico',
     extraResource: [
-      path.join(__dirname, 'node_modules/ffmpeg-static', 'ffmpeg')  
+      path.join(__dirname, 'node_modules/ffmpeg-static', 'ffmpeg.exe')  
     ],
   },
   rebuildConfig: {},
