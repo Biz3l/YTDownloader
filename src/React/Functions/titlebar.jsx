@@ -24,7 +24,7 @@ class windowHandler{
 }
 
 function Titlebar() {
-  const [devMode, setDevMode] = useState(true); // Padrão false :)
+  const [devMode, setDevMode] = useState(false); // Padrão false :)
   return (
   <div id="windowTitlebar">
     <div id="logoAndTitle">
