@@ -78,7 +78,7 @@ ipcMain.handle("yt:downloadVideo", async (_, url, format) => {
 
     if (format === ".mp4") {
       const videoStream = ytdl(url, {
-        quality: "highestvideo",
+        quality: "highest",
         filter: "videoandaudio",
       });
 
