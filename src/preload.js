@@ -5,7 +5,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("api", {
   getMetadata: (url) => ipcRenderer.invoke("yt:getMetadata", url),
-  downloadVideo: async (url, format) => await ipcRenderer.invoke("yt:downloadVideo", url, format),
+  downloadVideo: async (url, format, downloadAll) => await ipcRenderer.invoke("yt:downloadVideo", url, format, downloadAll),
   ping: () => ("Pong"),
   window: {
     close: () => ipcRenderer.send("app/close"),

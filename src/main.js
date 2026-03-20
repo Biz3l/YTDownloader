@@ -1,19 +1,46 @@
-import { app, BrowserWindow, ipcMain, nativeImage, Tray, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, Tray, Menu, dialog } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
-const ytdl = require("@distube/ytdl-core");
 const fs = require("fs");
-import { pipeline } from 'node:stream/promises';
-import ffmpeg from 'fluent-ffmpeg';
-import ffmpegPath from 'ffmpeg-static';
+const {autoUpdater} = require("electron-updater")
+
+
+app.whenReady().then(() => {
+  if (!app.isPackaged) {
+    console.log("AutoUpdater só funciona no build");
+    return;
+  }
+  autoUpdater.checkForUpdatesAndNotify();
+});
+
+autoUpdater.on("update-downloaded", () => {
+  dialog.showMessageBox({
+    type: "info",
+    message: "Atualização pronta! Reiniciar agora?",
+    buttons: ["Sim", "Depois"]
+  }).then(result => {
+    if (result.response === 0) {
+      autoUpdater.quitAndInstall();
+    }
+  });
+});
+
+const youtubedl = require("yt-dlp-exec");
+
+
+// Função para checar se é url do youtube
+function isYouTubeUrl(url) {
+  const pattern = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+  return pattern.test(url);
+}
 
 try {
-  // Just exists when the app is installed via squirrel
+  // Só existe quando o app é instalado via squirrel
   if (require('electron-squirrel-startup')) {
     app.quit();
   }
 } catch (_) {
-  // Build zip/portable may not have this module, and it's allright
+  // Build zip/portable pode não ter esse módulo, e tá tudo bem
 }
 
 
@@ -29,130 +56,120 @@ trayIcon.resize({ width: 16, height: 16 });
 
 
 
-// handle ytdl on electron
+/// handle ytdl on electron
 
 ipcMain.handle("yt:getMetadata", async (_, url) => {
   try {
-    if (!ytdl.validateURL(url)) {
+    if (!isYouTubeUrl(url)) {
       throw new Error("Invalid YouTube URL");
     }
-    const data = await ytdl.getInfo(url); // Pega info da URL passada
 
-    return (
-      {
-        thumbnail: data.videoDetails.thumbnails,
-        id: data.videoDetails.videoId,
-        videoName: data.videoDetails.title,
-        description: data.videoDetails.description,
-        author: data.videoDetails.author.name,
-        authorProfilePic: data.videoDetails.author.thumbnails[0].url,
-        viewCount: data.videoDetails.viewCount,
-        likeCount: data.videoDetails.likes,
-      }
-    )
+    const info = await youtubedl(url, {
+      dumpSingleJson: true,
+      skipDownload: true,
+      playlistItems: "1-20",
+    });
 
+    if (info.entries) {
+      return {
+        playlist: true,
+        videoInfo: {
+          id: info.id,
+          title: info.title,
+          uploader: info.uploader,
+          entries: info.entries.filter(Boolean),
+        },
+      };
+    } else {
+      return {
+        playlist: false,
+        videoInfo: {
+          thumbnail: info.thumbnails?.at(-1),
+          id: info.id,
+          videoName: info.title,
+          description: info.description,
+          author: info.uploader,
+          authorProfilePic:
+            info.channel_thumbnails?.at(-1)?.url || null,
+          viewCount: info.view_count,
+          likeCount: info.like_count,
+        },
+      };
+    }
   } catch (err) {
     return { error: err.message };
   }
 });
 
-// Ytdl for downloading
-ipcMain.handle("yt:downloadVideo", async (_, url, format) => {
-    function sanitizeFileName(name) {
-    return name.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").trim();
+
+// Ytdlp for downloading
+ipcMain.handle("yt:downloadVideo", async (_, url, format, downloadAll=false) => {
+  const runDownload = (options) => {
+    return new Promise((resolve, reject) => {
+      const subprocess = youtubedl.exec(url, options);
+
+      subprocess.stdout.on("data", (data) => {
+        const text = data.toString();
+        console.log("[yt-dlp]", text);
+
+
+      
+      subprocess.stderr.on("data", (data) => {
+      console.log("[yt-dlp:err]", data.toString());
+      });
+
+      subprocess.on("close", (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`yt-dlp failed: ${code}`));
+      });
+
+      subprocess.on("error", reject);
+
+      })
+    })
   }
+
+  const downloadPath = path.join(app.getPath('downloads'), "%(title)s.%(ext)s" );
+
+  console.log("STARTING DOWNLOAD...");
+
+
   try {
-    if(!ytdl.validateURL(url)) {
-      return ("Invalid URL");
-    };
+    switch(format){
+    case ".mp3":
+      await runDownload({
+        extractAudio: true,
+        audioFormat: "mp3",
+        ...(downloadAll ? {} : {noPlaylist: true}),
+        ...(downloadAll && {playlistItems: "1-20"}),
+        output: downloadPath,
+      });
+      break;
     
-    const validFormats = [".mp4", ".mp3"];
-    if (!validFormats.includes(format)){
-      return ("Invalid Format!");
-    };
-
-    const videoInfo = await ytdl.getInfo(url);
-    const videoTitle = videoInfo.videoDetails.title;
-    let downloadPath = await path.join(app.getPath('downloads'), `${sanitizeFileName(videoTitle)}${format}`);
-
-
-    if (format === ".mp4") {
-      const videoStream = ytdl(url, {
-        quality: "highest",
-        filter: "videoandaudio",
+    case ".mp4":
+      await runDownload(url, {
+        format: "best[height<=720]",
+        output: downloadPath,
+        ...(downloadAll ? {} : {noPlaylist: true}),
       });
-
-      const fileStream = fs.createWriteStream(downloadPath);
-
-      await pipeline(videoStream, fileStream);
-
-      return {
-        success: true,
-        filePath: downloadPath,
-      };
-
-      } else if (format === ".mp3") {
-        const videoStream = ytdl(url, {
-        quality: "highestvideo",
-        filter: "videoandaudio",
-      });
-      
-      downloadPath = await path.join(app.getPath('downloads'), `${sanitizeFileName(videoTitle)}.mp4`);
-
-      const fileStream = fs.createWriteStream(downloadPath);
-
-      await pipeline(videoStream, fileStream);
-      
-      let ffmpegExecPath;
-
-      if (app.isPackaged) {
-        ffmpegExecPath = path.join(
-          process.resourcesPath, 'ffmpeg.exe'
-        );
-      } else {
-        ffmpegExecPath = ffmpegPath;
-      }
-
-      ffmpeg.setFfmpegPath(ffmpegExecPath);
-
-      await new Promise((resolve, reject) => {
-        ffmpeg(downloadPath)
-        .toFormat('mp3')
-        .save(path.join(
-          app.getPath('downloads'), `${sanitizeFileName(videoTitle)}.mp3`
-      )
-    )
-        .on('end', resolve)
-        .on('error', reject);
-      });
-
-      
-      await fs.promises.unlink(downloadPath, (error => {
-        if (error) {
-          return {
-            result: error,
-            message: "An error ocurred while trying to delete the file",
-          };
-        } else {
-          return {
-            result: "file Succesfully deleted",
-          }
-        }
-      }));
-
-
-
-      return {
-        success: true,
-        filePath: path.join(
-          app.getPath('downloads'), `${sanitizeFileName(videoTitle)}.mp3`)
-      }
-    }
-    
-    } catch (error) {
-      return {error: error.message};
+      break;
   }
-})
+  
+  return {
+    success: true,
+    filePath: app.getPath('downloads')
+  };
+  
+  } catch (e) {
+    return {
+      success: false,
+      error: e.message
+    }
+  }
+
+  
+
+});
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {

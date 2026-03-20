@@ -1,8 +1,8 @@
 import React from "react";
-import Checker from "./Functions/form"
 import { motion } from "framer-motion";
 import { ArrowBigDownDash } from "lucide-react";
 import ThemeSwitcher from "./Functions/themeSwitcher";
+import HomeMainApp from "./Functions/MainApp";
 
 const MotionArrow = motion(ArrowBigDownDash);
 
@@ -28,7 +28,7 @@ function Application() {
         />  
     </div>
     
-    <Checker />
+    <HomeMainApp />
   </div> 
   );
 };

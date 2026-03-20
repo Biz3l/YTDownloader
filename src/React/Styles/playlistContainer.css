@@ -1,0 +1,23 @@
+.videoPlaylistContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.videoPlaylistContainer img{
+  height: 100px;
+  object-fit: cover;
+}
+
+#videoPlaylistTitle {
+  margin-left: 20px;
+}
+
+#videoPlaylistAuthor::before {
+  content: '- ';
+}
+
+#videoPlaylistAuthor {
+  font-weight: 800;
+  margin-left: 10px;
+}
