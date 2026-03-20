@@ -10,7 +10,7 @@ export default defineConfig({
         'electron-updater',
         'ffmpeg-static',
         'fluent-ffmpeg',
-        'yt-dlp-exec'
+        '@distube/ytdl-core'
       ]
     }
   },
