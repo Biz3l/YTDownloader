@@ -7,6 +7,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       external: [
+        'electron-updater',
         'ffmpeg-static',
         'fluent-ffmpeg',
         '@distube/ytdl-core'
