@@ -4,27 +4,6 @@ import started from 'electron-squirrel-startup';
 const fs = require("fs");
 const { autoUpdater } = require("electron-updater")
 
-
-app.whenReady().then(() => {
-  if (!app.isPackaged) {
-    console.log("AutoUpdater só funciona no build");
-    return;
-  }
-  autoUpdater.checkForUpdatesAndNotify();
-});
-
-autoUpdater.on("update-downloaded", () => {
-  dialog.showMessageBox({
-    type: "info",
-    message: "Atualização pronta! Reiniciar agora?",
-    buttons: ["Sim", "Depois"]
-  }).then(result => {
-    if (result.response === 0) {
-      autoUpdater.quitAndInstall();
-    }
-  });
-});
-
 const youtubedl = require("yt-dlp-exec");
 
 
