@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, nativeImage, Tray, Menu, dialog } from 'el
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 const fs = require("fs");
-const {autoUpdater} = require("electron-updater")
+const { autoUpdater } = require("electron-updater")
 
 
 app.whenReady().then(() => {

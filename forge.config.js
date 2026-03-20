@@ -48,6 +48,7 @@ function collectAllDeps(lock, rootPkgs) {
 
 module.exports = {
   packagerConfig: {
+    executableName: "ytdownloader",
     asar: true,
     asarUnpack: [
       '**/node_modules/ffmpeg-static/**'
