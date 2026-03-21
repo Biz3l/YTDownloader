@@ -71,7 +71,7 @@ function HomeMainApp() {
     try {
       if (format === ".mp4") {
         setProgress(50);
-        const file = await window.api.downloadVideo(url, format, false);
+        const file = await window.api.downloadVideo(url, format, downloadAll);
         setProgress(100);
         setFilePath(file.filePath);
         console.log(file);

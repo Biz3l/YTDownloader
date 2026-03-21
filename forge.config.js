@@ -56,8 +56,8 @@ module.exports = {
     ],  
     icon: './src/Resources/icon.ico',
     extraResource: [
-      path.join(__dirname, 'node_modules/ffmpeg-static', 'ffmpeg.exe'),
-      path.join(__dirname, 'node_modules/yt-dlp-exec/bin/yt-dlp.exe') 
+      path.join(__dirname, 'node_modules/ffmpeg-static', process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg'),
+      path.join(__dirname, 'node_modules/yt-dlp-exec/bin' , process.platform === 'win32' ? 'yt-dlp.exe' : 'yt-dlp') 
     ],
   },
   rebuildConfig: {},

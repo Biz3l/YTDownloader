@@ -28,10 +28,10 @@ autoUpdater.on("update-downloaded", () => {
 
 const ytdlpPath = path.join(
   process.resourcesPath,
-  "yt-dlp.exe"
+  process.platform === 'win32' ? 'yt-dlp.exe' : 'yt-dlp'
 );
 
-const youtubedl = require("yt-dlp-exec").create(ytdlpPath);
+const youtubedl = !app.isPackaged ? require('yt-dlp-exec') : require('yt-dlp-exec').create(ytdlpPath);
 
 
 // Função para checar se é url do youtube
@@ -153,7 +153,7 @@ ipcMain.handle("yt:downloadVideo", async (_, url, format, downloadAll=false) => 
       break;
     
     case ".mp4":
-      await runDownload(url, {
+      await runDownload({
         format: "best[height<=720]",
         output: downloadPath,
         ...(downloadAll ? {} : {noPlaylist: true}),
