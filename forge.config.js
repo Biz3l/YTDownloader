@@ -51,11 +51,13 @@ module.exports = {
     executableName: "ytdownloader",
     asar: true,
     asarUnpack: [
-      '**/node_modules/ffmpeg-static/**'
+      '**/node_modules/ffmpeg-static/**',
+      '**/node_modules/yt-dlp-exec/bin/**',
     ],  
     icon: './src/Resources/icon.ico',
     extraResource: [
-      path.join(__dirname, 'node_modules/ffmpeg-static', 'ffmpeg.exe')  
+      path.join(__dirname, 'node_modules/ffmpeg-static', 'ffmpeg.exe'),
+      path.join(__dirname, 'node_modules/yt-dlp-exec/bin/yt-dlp.exe') 
     ],
   },
   rebuildConfig: {},
@@ -136,7 +138,10 @@ module.exports = {
       const roots = [
         'fluent-ffmpeg',
         'ffmpeg-static',
-        '@distube/ytdl-core'
+        'yt-dlp-exec',
+        'electron-updater',
+        'onetime',
+        'merge-stream',
       ];
 
 

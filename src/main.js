@@ -5,6 +5,8 @@ const fs = require("fs");
 
 const { autoUpdater } = require('electron-updater');
 
+
+ // Função do updater para checar e atualizar
 app.whenReady().then(() => {
   autoUpdater.checkForUpdatesAndNotify();
 });
@@ -21,7 +23,15 @@ autoUpdater.on("update-downloaded", () => {
   });
 });
 
-const youtubedl = require("yt-dlp-exec");
+// fim da função
+
+
+const ytdlpPath = path.join(
+  process.resourcesPath,
+  "yt-dlp.exe"
+);
+
+const youtubedl = require("yt-dlp-exec").create(ytdlpPath);
 
 
 // Função para checar se é url do youtube

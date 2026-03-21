@@ -11,6 +11,8 @@ export default defineConfig({
         'ffmpeg-static',
         'fluent-ffmpeg',
         'yt-dlp-exec',
+        'onetime',
+        'merge-stream',
       ]
     }
   },
