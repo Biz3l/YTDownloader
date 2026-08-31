@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.1
+### Bugfixes
+- Yt-dlp stopped downloading fixed.
+
 ## v2.0.0
 ### Bugfixes
 - Scrollbar was within the app window label
