@@ -22,7 +22,7 @@ function ThemeSwitcher() {
   return(
     <div className="switch">
           <input type="checkbox" id="toggleswitch"  checked={isChecked} onChange={handleChange}/>
-          <label for="toggleswitch" className="slider"></label>
+          <label htmlFor="toggleswitch" className="slider"></label>
         </div>
   )
 }

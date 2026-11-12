@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import '../Styles/playlistContainer.css';
 
@@ -11,6 +11,7 @@ function HomeMainApp() {
   const [filePath, setFilePath] = useState("");
   const [isDownloading, setDownloading] = useState(false);
   const [Progress, setProgress] = useState(null);
+  const [selectedVideos, setSelectedVideos] = useState([]);
 
 
   async function handleSearch() {
@@ -48,6 +49,7 @@ function HomeMainApp() {
         }
 
         setVideoData(data);
+        setSelectedVideos(data.videoInfo?.entries?.map((_, index) => index) ?? []);
         
         setDownloadUrl(url);
         setUrl("");
@@ -78,9 +80,16 @@ function HomeMainApp() {
 
       } else if (format === ".mp3") {
         if (downloadAll) {
-          const totalArr = videoData?.videoInfo?.entries.length;
-          const eachProgress = 100/totalArr //Vai pegar o progresso de cada um pra no final adicionar a quantidade
-          for (const element of videoData?.videoInfo?.entries) {
+          const selectedEntries = videoData?.videoInfo?.entries.filter((_, index) => selectedVideos.includes(index)) ?? [];
+
+          if (selectedEntries.length === 0) {
+            setError("Select at least one video to download.");
+            return;
+          }
+
+          const eachProgress = 100 / selectedEntries.length;
+          setProgress(0);
+          for (const element of selectedEntries) {
             const file = await window.api.downloadVideo(element.original_url, format);
             setProgress(Progress => Progress + eachProgress);
             setFilePath(file.filePath);
@@ -102,6 +111,22 @@ function HomeMainApp() {
       setProgress(null);
       setDownloading(false);
     }
+  }
+
+  function toggleVideoSelection(index) {
+    setSelectedVideos((currentSelection) => currentSelection.includes(index)
+      ? currentSelection.filter((selectedIndex) => selectedIndex !== index)
+      : [...currentSelection, index]);
+  }
+
+  function toggleAllVideos() {
+    setSelectedVideos((currentSelection) => {
+      const entries = videoData?.videoInfo?.entries ?? [];
+
+      return currentSelection.length === entries.length
+        ? []
+        : entries.map((_, index) => index);
+    });
   }
 
 
@@ -134,7 +159,7 @@ function HomeMainApp() {
           <div id="downloadButtons">
             <button className="downloadButton" onClick={() => {handleDownload(downloadUrl, ".mp3", false)}} disabled={isDownloading}>Download MP3</button>
             <button className="downloadButton" onClick={() => {handleDownload(downloadUrl, ".mp4", false)}} disabled={isDownloading}>Download MP4</button>
-            <button className="downloadButton" onClick={() => {handleDownload(downloadUrl, ".mp3", true)}} disabled={isDownloading}>Download All MP3</button>
+            <button className="downloadButton" onClick={() => {handleDownload(downloadUrl, ".mp3", true)}} disabled={isDownloading || selectedVideos.length === 0}>Download Selected MP3</button>
           </div>
 
           {isDownloading && (
@@ -149,11 +174,29 @@ function HomeMainApp() {
 
           <div id="videoInformation">
             <h1>Playlist</h1>
+            <label id="selectAllText" htmlFor="selectAll">Select all videos to download?</label>
+            <input
+            checked={selectedVideos.length === videoData?.videoInfo?.entries.length}
+            onChange={toggleAllVideos}
+            disabled={isDownloading}
+            id="selectAll" 
+            type="checkbox"
+            ></input>
             {videoData?.videoInfo?.entries?.map((element, index) => (
               <div className="videoPlaylistContainer" key={index}>
-                <img id="videoPlaylistThumb" src={element.thumbnail} />
-                <p id="videoPlaylistTitle">{element.title}</p>
-                <p id="videoPlaylistAuthor">{element.artist ? element.artist : element.channel}</p>
+                <input
+                  id={`video-${index}`}
+                  type="checkbox"
+                  checked={selectedVideos.includes(index)}
+                  onChange={() => toggleVideoSelection(index)}
+                  disabled={isDownloading}
+                  aria-label={`Select ${element.title}`}
+                />
+                <label style={{'display': 'flex', 'flex': '1'}} htmlFor={`video-${index}`}>
+                  <img id="videoPlaylistThumb" src={element.thumbnail} />
+                  <p id="videoPlaylistTitle">{element.title}</p>
+                  <p id="videoPlaylistAuthor">{element.artist ? element.artist : element.channel}</p>
+                </label>
               </div>
               )
             )}
