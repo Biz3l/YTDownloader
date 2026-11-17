@@ -25,6 +25,7 @@ class windowHandler{
 
 function Titlebar() {
   const [devMode, setDevMode] = useState(false); // Padrão false :)
+  //FIXME: TEM QUE ALTERAR AQUI PRA CHECAR SE ESTÁ EM DEVMODE OU NAO
   return (
   <div id="windowTitlebar">
     <div id="logoAndTitle">

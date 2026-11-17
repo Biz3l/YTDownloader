@@ -5,8 +5,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 function copyDir(src, dest) {
+  fs.rmSync(dest, { recursive: true, force: true });
   fs.mkdirSync(dest, { recursive: true });
-  fs.cpSync(src, dest, { recursive: true });
+  fs.cpSync(src, dest, { recursive: true, dereference: true });
 }
 
 // Read deps from package-lock (npm v7+ => lockfileVersion 2/3)
@@ -43,6 +44,19 @@ function collectAllDeps(lock, rootPkgs) {
   }
 
   return [...seen];
+}
+
+function removeBinDirs(dir) {
+  if (!fs.existsSync(dir)) return;
+
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const entryPath = path.join(dir, entry.name);
+    if (entry.isDirectory() && entry.name === '.bin') {
+      fs.rmSync(entryPath, { recursive: true, force: true });
+    } else if (entry.isDirectory()) {
+      removeBinDirs(entryPath);
+    }
+  }
 }
 
 
@@ -84,6 +98,18 @@ module.exports = {
       name: '@electron-forge/maker-rpm',
       config: {},
     },
+  ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'Biz3l',
+          name: 'YTDownloader',
+          repository: 'https://github.com/Biz3l/YTDownloader',
+        },
+      }
+    }
   ],
   plugins: [
     {
@@ -163,6 +189,7 @@ module.exports = {
         }
       }
 
+      removeBinDirs(destNodeModules);
       console.log(`✅ I'd copy all ${all.length} modules to the package (roots: ${roots.join(', ')})`);
     },
   },
