@@ -48,7 +48,10 @@ const trayPath = path.join(__dirname, 'src/Resources', 'YTDownloaderlogo.png');
 const trayIcon = nativeImage.createFromPath(trayPath);
 trayIcon.resize({ width: 16, height: 16 });
 
-
+/// Check enviroment that is running
+ipcMain.handle("checkEnv", () => {
+ return app.isPackaged;
+});
 
 /// handle ytdl on electron
 

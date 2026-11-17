@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld("api", {
   getMetadata: (url) => ipcRenderer.invoke("yt:getMetadata", url),
   downloadVideo: async (url, format, downloadAll) => await ipcRenderer.invoke("yt:downloadVideo", url, format, downloadAll),
   ping: () => ("Pong"),
+  checkEnv: () => ipcRenderer.invoke("checkEnv"),
   window: {
     close: () => ipcRenderer.send("app/close"),
     fullscreen: () => ipcRenderer.send("app/fullscreen"),
