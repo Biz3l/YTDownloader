@@ -13,4 +13,4 @@ contextBridge.exposeInMainWorld("api", {
     minimize: () => ipcRenderer.send("app/minimize"),
     devTools: () => ipcRenderer.send("app/devTools"),
   }
-})
+});

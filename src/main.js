@@ -1,28 +1,16 @@
-import { app, BrowserWindow, ipcMain, nativeImage, Tray, Menu, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, Tray, Menu } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
-const fs = require("fs");
+// const fs = require("fs");
+//TODO: FileSystem: select where to save the archives.
 
-const { autoUpdater } = require('electron-updater');
+const { updateElectronApp } = require('update-electron-app')
 
 
  // Função do updater para checar e atualizar
 app.whenReady().then(() => {
-  autoUpdater.checkForUpdatesAndNotify();
+  updateElectronApp();
 });
-
-autoUpdater.on("update-downloaded", () => {
-  dialog.showMessageBox({
-    type: "info",
-    message: "Atualização pronta! Reiniciar agora?",
-    buttons: ["Sim", "Depois"]
-  }).then(result => {
-    if (result.response === 0) {
-      autoUpdater.quitAndInstall();
-    }
-  });
-});
-
 // fim da função
 
 
@@ -45,7 +33,7 @@ try {
   if (require('electron-squirrel-startup')) {
     app.quit();
   }
-} catch (_) {
+} catch {
   // Build zip/portable pode não ter esse módulo, e tá tudo bem
 }
 
@@ -182,11 +170,9 @@ if (started) {
   app.quit();
 }
 
-
-let tray;
-
 const createWindow = () => {
-  tray = new Tray(trayIcon);
+  let tray = new Tray(trayIcon);
+  tray.setToolTip('YTDownloader');
   
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -196,7 +182,7 @@ const createWindow = () => {
     center: true,
     icon: iconPath,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
     },
   });
