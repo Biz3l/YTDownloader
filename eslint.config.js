@@ -31,7 +31,7 @@ module.exports = [
     },
     settings: {
       react: {
-        version: "19.3"
+        version: "detect"
       }
     },
     rules: {
