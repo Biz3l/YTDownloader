@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import logo from '../../Resources/YTDownloaderlogo.png';
 
 // Funções da titlebar
@@ -25,7 +25,16 @@ class windowHandler{
 
 function Titlebar() {
   const [devMode, setDevMode] = useState(false); // Padrão false :)
-  //FIXME: TEM QUE ALTERAR AQUI PRA CHECAR SE ESTÁ EM DEVMODE OU NAO
+
+  useEffect(() => {
+    async function getEnvState() {
+      const envState = await window.api.checkEnv();
+      setDevMode(!envState);
+    }
+    getEnvState();
+  }
+  ),[];
+
   return (
   <div id="windowTitlebar">
     <div id="logoAndTitle">
