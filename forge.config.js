@@ -79,7 +79,9 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        setupIcon: './src/Resources/icon.ico', 
+        setupIcon: './src/Resources/icon.ico',
+        loadingGif: './src/Assets/installGif.gif',
+
       },
     },
     {
@@ -165,7 +167,6 @@ module.exports = {
         'fluent-ffmpeg',
         'ffmpeg-static',
         'yt-dlp-exec',
-        'electron-updater',
         'onetime',
         'merge-stream',
       ];
