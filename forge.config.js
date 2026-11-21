@@ -79,6 +79,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
+        icon: './src/Resources/icon.ico',
         setupIcon: './src/Resources/icon.ico',
         loadingGif: './src/Assets/installGif.gif',
 
