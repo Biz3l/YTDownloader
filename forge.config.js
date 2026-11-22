@@ -170,6 +170,10 @@ module.exports = {
         'yt-dlp-exec',
         'onetime',
         'merge-stream',
+        'cross-spawn',
+        'strip-final-newline',
+        'human-signals',
+        'signal-exit',
       ];
 
 
