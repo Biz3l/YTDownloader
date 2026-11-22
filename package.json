@@ -1,7 +1,7 @@
 {
   "name": "ytdownloader",
   "productName": "YTDownloader",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "An Youtube downloader",
   "repository": "https://github.com/Biz3l/YTDownloader",
   "main": ".vite/build/main.cjs",
@@ -25,7 +25,7 @@
   "keywords": [],
   "author": {
     "name": "Biz3l",
-    "email": "gabrieloliveiralveslegal@gmail.com"
+    "email": "contato.goalves@gmail.com"
   },
   "license": "MIT",
   "devDependencies": {
