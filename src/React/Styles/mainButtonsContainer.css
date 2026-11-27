@@ -1,0 +1,26 @@
+#mainButtonsContainer {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+#mainButtonsContainer svg{
+  width: 40px;
+  transition: transform 0.5s, fill 0.5s;
+}
+
+#mainButtonsContainer svg:hover{
+  cursor: pointer;
+  transform: rotate(90deg);
+  
+}
+
+:root.dark {
+  #mainButtonsContainer svg{
+    fill: white;
+}
+}
+
+#svgConfigButton {
+  display: block;
+}

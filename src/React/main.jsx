@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import Application from "./app";
-import Titlebar from "./Functions/titlebar";
+import Titlebar from "./Components/titlebar";
 
 const root = createRoot(document.getElementById("app"));
 

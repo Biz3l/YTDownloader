@@ -94,3 +94,6 @@ out/
 
 # logs
 *-player-script.js
+
+#config file
+config.json
