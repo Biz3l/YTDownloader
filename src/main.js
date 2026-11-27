@@ -1,9 +1,7 @@
-import { app, BrowserWindow, ipcMain, nativeImage, Tray, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, Tray, Menu, dialog } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
-// const fs = require("fs");
-//TODO: FileSystem: select where to save the archives.
-
+const fs = require("fs");
 const { updateElectronApp } = require('update-electron-app')
 
 
@@ -125,9 +123,23 @@ ipcMain.handle("yt:downloadVideo", async (_, url, format, downloadAll=false) => 
       })
     })
   }
-
-  const downloadPath = path.join(app.getPath('downloads'), "%(title)s.%(ext)s" );
-
+  let downloadPath;
+  let configPath
+  try {
+      const configText = await fs.promises.readFile('./config.json', 'utf8');
+      const savedPath = JSON.parse(configText).path;
+      configPath = typeof savedPath === 'string' && savedPath && savedPath !== 'undefined'
+        ? savedPath
+        : null;
+  } catch(e) {
+    console.log(`Erro: ${e}`);
+    configPath = null;
+  } finally {
+    downloadPath = configPath ? path.join(`${configPath}`, "%(title)s.%(ext)s") : path.join(app.getPath('downloads'), "%(title)s.%(ext)s");
+  }
+  
+  
+  console.log(`Path for downloading: ${downloadPath}`);
   console.log("STARTING DOWNLOAD...");
 
 
@@ -154,7 +166,7 @@ ipcMain.handle("yt:downloadVideo", async (_, url, format, downloadAll=false) => 
   
   return {
     success: true,
-    filePath: app.getPath('downloads')
+    filePath: configPath
   };
   
   } catch (e) {
@@ -166,6 +178,33 @@ ipcMain.handle("yt:downloadVideo", async (_, url, format, downloadAll=false) => 
 
   
 
+});
+
+
+ipcMain.handle("fs:selectFolder", async () => {
+  const selectedPaths = dialog.showOpenDialogSync({ properties: ['openDirectory'] });
+  if (!selectedPaths?.length) {
+    return null;
+  }
+
+  const json = JSON.stringify({ path: selectedPaths[0] });
+  await fs.promises.writeFile('config.json', json, 'utf-8');
+  return json;
+});
+
+ipcMain.handle("fs:seeSavedFolder", async () => {
+  try {
+    const file = await fs.readFileSync("config.json", "utf-8");
+    const json = JSON.parse(file);
+    if (typeof json.path !== "string" || !json.path || json.path === "undefined") {
+      return app.getPath('downloads');
+    }
+    return json.path;
+  } catch(e) {
+    console.log(`Error seeing saved folder: ${e}`);
+    return app.getPath('downloads');
+  }
+  
 });
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
